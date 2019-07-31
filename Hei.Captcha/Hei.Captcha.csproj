@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.1.0</Version>
+    <Description>一个基于跨平台的验证码生成器工具，目前仅支持.Net Core</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0006" />
+  </ItemGroup>
+
+</Project>
