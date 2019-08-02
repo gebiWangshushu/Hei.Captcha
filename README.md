@@ -4,7 +4,7 @@
 
 # Hei.Captcha
 
-一个.net core，跨平台的验证码生成工具包，基于[ImageSharp](https://github.com/SixLabors/ImageSharp)。
+一个.net core，跨平台的图形验证码生成工具包，基于[ImageSharp](https://github.com/SixLabors/ImageSharp)。
 
 
 
