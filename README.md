@@ -46,7 +46,11 @@
 Install-Package Hei.Captcha
 ```
 
-
+```
+ services.AddMemoryCache();//使用缓存 
+ services.AddHeiCaptcha();//使用验证码
+ 
+```
 
 ```
 /// <summary>
