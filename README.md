@@ -4,7 +4,11 @@
 
 # Hei.Captcha
 
-一个.net core，跨平台的验证码生成工具包，基于[ImageSharp](https://github.com/SixLabors/ImageSharp)。
+.net core，跨平台的验证码生成工具包，支持动态gif验证码。基于[ImageSharp](https://github.com/SixLabors/ImageSharp)。
+
+
+
+> 使用.NET Standard 2.0，目前仅测试过.net core的支持，.net frameword 4.6.1 及以上请自行测试~
 
 
 
@@ -12,31 +16,26 @@
 
 
 
-![img](images/BubbleCode.png)
 
-![1564563919705](images/1564563919705.png)
+## 动态gif中文泡泡验证码
 
-![1564563740706](images/1564563740706.png)
+![](images/bubble1.gif)
 
+![](images/bubble2.gif)
 
+![](images/bubble3.gif)
 
+## 动态gif字母数字组合验证码
 
+![](images/engif1.gif)
 
-## 字母数字组合验证码
+![](images/engif2.gif)
 
-![img](images/HybridCode.png)
+![](images/engif3.gif)
 
-![1564563801717](images/1564563801717.png)
+## 表单示例
 
-![1564563816361](images/1564563816361.png)
-
-![1564563853298](images/1564563853298.png)
-
-![1564563877047](images/1564563877047.png)
-
-## 表单Demo
-
-![1564564569409](images/1564564569409.png)
+![1565146764062](images/form.gif)
 
 
 
@@ -49,6 +48,20 @@ Install-Package Hei.Captcha
 
 
 ```
+//StartUp.cs,Method ConfigureServices()
+services.AddHeiCaptcha();
+```
+
+
+
+```
+private readonly SecurityCodeHelper _securityCode;
+
+public HomeController(SecurityCodeHelper securityCode)
+{
+	this._securityCode = securityCode;
+}
+
 /// <summary>
 /// 泡泡中文验证码 
 /// </summary>
@@ -71,6 +84,30 @@ public IActionResult HybridCode()
     var imgbyte = _securityCode.GetEnDigitalCodeByte(code);
 
     return File(imgbyte, "image/png");
+}
+
+/// <summary>
+/// gif泡泡中文验证码 
+/// </summary>
+/// <returns></returns>
+public IActionResult GifBubbleCode()
+{
+    var code = _securityCode.GetRandomCnText(2);
+    var imgbyte = _securityCode.GetGifBubbleCodeByte(code);
+
+    return File(imgbyte, "image/gif");
+}
+
+/// <summary>
+/// 数字字母组合验证码
+/// </summary>
+/// <returns></returns>
+public IActionResult GifHybridCode()
+{
+    var code = _securityCode.GetRandomEnDigitalText(4);
+    var imgbyte = _securityCode.GetGifEnDigitalCodeByte(code);
+
+    return File(imgbyte, "image/gif");
 }
 ```
 
