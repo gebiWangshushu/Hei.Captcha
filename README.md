@@ -2,7 +2,7 @@
 
 
 
-# Hei.Captcha
+# Hei.Captcha[![Hei.Captcha](https://img.shields.io/badge/nuget-v0.2.0-blue)](https://www.nuget.org/packages/Hei.Captcha/)
 
 .net core，跨平台的验证码生成工具包，支持动态gif验证码。基于[ImageSharp](https://github.com/SixLabors/ImageSharp)。
 
@@ -16,6 +16,27 @@
 
 
 
+![img](images/BubbleCode.png)
+
+![1564563919705](images/1564563919705.png)
+
+![1564563740706](images/1564563740706.png)
+
+
+
+
+
+## 字母数字组合验证码
+
+![img](images/HybridCode.png)
+
+![1564563801717](images/1564563801717.png)
+
+![1564563816361](images/1564563816361.png)
+
+![1564563853298](images/1564563853298.png)
+
+![1564563877047](images/1564563877047.png)
 
 ## 动态gif中文泡泡验证码
 
@@ -114,3 +135,12 @@ public IActionResult GifHybridCode()
 ### 高级
 
 参照Demo， 通过修改/丰富应用程序运行目录`./fonts`目录下的字体文件，生成更多不同字体组合的验证码。
+
+
+
+## 公众号
+
+欢迎关注我的公众号。虽然有点懒，不过偶尔打打鸡血还是会写点东西的，你的关注就是我的动力，谢谢支持~~
+
+![1565148379847](images/1565148379847.png)
+
