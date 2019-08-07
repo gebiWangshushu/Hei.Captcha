@@ -122,7 +122,7 @@ public IActionResult GifBubbleCode()
 }
 
 /// <summary>
-/// 数字字母组合验证码
+/// gif数字字母组合验证码
 /// </summary>
 /// <returns></returns>
 public IActionResult GifHybridCode()
