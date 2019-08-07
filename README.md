@@ -2,7 +2,9 @@
 
 
 
-# Hei.Captcha[![Hei.Captcha](https://img.shields.io/badge/nuget-v0.2.0-blue)](https://www.nuget.org/packages/Hei.Captcha/)
+# Hei.Captcha
+
+[![Hei.Captcha](https://img.shields.io/badge/nuget-v0.2.0-blue)](https://www.nuget.org/packages/Hei.Captcha/)
 
 .net core，跨平台的验证码生成工具包，支持动态gif验证码。基于[ImageSharp](https://github.com/SixLabors/ImageSharp)。
 
