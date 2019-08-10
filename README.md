@@ -64,6 +64,10 @@
 
 ## 使用
 
+开始之前先把字体文件<https://github.com/gebiWangshushu/Hei.Captcha/tree/master/Demo/fonts>整个fonts目录下载放到程序根目录(如果只想下载一个文件夹可以使用chrome插件：[GitZip for github](https://chrome.google.com/webstore/detail/gitzip-for-github/ffabmkklhbepgcgfonabamgnfafbdlkn))
+
+
+
 ```
 Install-Package Hei.Captcha
 ```
