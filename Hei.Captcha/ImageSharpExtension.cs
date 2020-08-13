@@ -59,7 +59,14 @@ namespace Hei.Captcha
             });
         }
 
-        public static IImageProcessingContext<TPixel> DrawingEnText<TPixel>(this IImageProcessingContext<TPixel> processingContext, int containerWidth, int containerHeight, string text, string[] colorHexArr, Font[] fonts)
+        public static IImageProcessingContext<TPixel> DrawingEnText<TPixel>(this IImageProcessingContext<TPixel> processingContext, 
+            int containerWidth, 
+            int containerHeight, 
+            string text, 
+            string[] colorHexArr, 
+            Font[] fonts,
+            int grids = 6,
+            int rotate = 45)
             where TPixel : struct, IPixel<TPixel>
         {
             return processingContext.Apply(img =>
@@ -88,8 +95,8 @@ namespace Hei.Captcha
 
                             img2.Mutate(ctx => ctx
                                             .DrawText(textGraphicsOptions, text[i].ToString(), scaledFont, Rgba32.FromHex(colorHex), new Point(0, 0))
-                                            .DrawingGrid(containerWidth, containerHeight, Rgba32.FromHex(colorHex), 6, 1)
-                                            .Rotate(random.Next(-45, 45))
+                                            .DrawingGrid(containerWidth, containerHeight, Rgba32.FromHex(colorHex), grids, 1)
+                                            .Rotate(random.Next(-1 * rotate, rotate))
                                         );
                             img.Mutate(ctx => ctx.DrawImage(img2, point, 1));
                         }
@@ -114,6 +121,8 @@ namespace Hei.Captcha
         public static IImageProcessingContext<TPixel> DrawingCircles<TPixel>(this IImageProcessingContext<TPixel> processingContext, int containerWidth, int containerHeight, int count, int miniR, int maxR, TPixel color, bool canOverlap = false)
                where TPixel : struct, IPixel<TPixel>
         {
+            if (count <= 0) return processingContext;
+
             return processingContext.Apply(img =>
             {
                 EllipsePolygon ep = null;
@@ -121,26 +130,25 @@ namespace Hei.Captcha
                 PointF tempPoint = new PointF();
                 List<PointF> points = new List<PointF>();
 
-                if (count > 0)
+                for (int i = 0; i < count; i++)
                 {
-                    for (int i = 0; i < count; i++)
+                    if (canOverlap)
                     {
-                        if (canOverlap)
-                        {
-                            tempPoint = new PointF(random.Next(0, containerWidth), random.Next(0, containerHeight));
-                        }
-                        else
-                        {
-                            tempPoint = getCirclePoginF(containerWidth, containerHeight, (miniR + maxR), ref points);
-                        }
-                        ep = new EllipsePolygon(tempPoint, random.Next(miniR, maxR));
-
-                        img.Mutate(ctx => ctx
-                                      .Draw(color, (float)(random.Next(94, 145) / 100.0), ep.Clip())
-                                  );
+                        tempPoint = new PointF(random.Next(0, containerWidth), random.Next(0, containerHeight));
                     }
+                    else
+                    {
+                        tempPoint = GetCirclePointF(containerWidth, containerHeight, (miniR + maxR), ref points);
+                    }
+
+                    ep = new EllipsePolygon(tempPoint, random.Next(miniR, maxR));
+
+                    img.Mutate(ctx => ctx
+                        .Draw(color, (float)(random.Next(94, 145) / 100.0), ep.Clip())
+                    );
                 }
             });
+
         }
         /// <summary>
         /// 画杂线
@@ -156,12 +164,14 @@ namespace Hei.Captcha
         public static IImageProcessingContext<TPixel> DrawingGrid<TPixel>(this IImageProcessingContext<TPixel> processingContext, int containerWidth, int containerHeight, TPixel color, int count, float thickness)
             where TPixel : struct, IPixel<TPixel>
         {
+            if (count <= 0) return processingContext;
+
             return processingContext.Apply(img =>
             {
                 var points = new List<PointF> { new PointF(0, 0) };
                 for (int i = 0; i < count; i++)
                 {
-                    getCirclePoginF(containerWidth, containerHeight, 9, ref points);
+                    GetCirclePointF(containerWidth, containerHeight, 9, ref points);
                 }
                 points.Add(new PointF(containerWidth, containerHeight));
                 img.Mutate(ctx => ctx
@@ -178,12 +188,11 @@ namespace Hei.Captcha
         /// <param name="lapR"></param>
         /// <param name="list"></param>
         /// <returns></returns>
-        private static PointF getCirclePoginF(int containerWidth, int containerHeight, double lapR, ref List<PointF> list)
+        private static PointF GetCirclePointF(int containerWidth, int containerHeight, double lapR, ref List<PointF> list)
         {
             Random random = new Random();
             PointF newPoint = new PointF();
             int retryTimes = 10;
-            double tempDistance = 0;
 
             do
             {
@@ -192,8 +201,7 @@ namespace Hei.Captcha
                 bool tooClose = false;
                 foreach (var p in list)
                 {
-                    tooClose = false;
-                    tempDistance = Math.Sqrt((Math.Pow((p.X - newPoint.X), 2) + Math.Pow((p.Y - newPoint.Y), 2)));
+                    var tempDistance = Math.Sqrt((Math.Pow((p.X - newPoint.X), 2) + Math.Pow((p.Y - newPoint.Y), 2)));
                     if (tempDistance < lapR)
                     {
                         tooClose = true;

@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Hei.Captcha
 {
@@ -11,12 +9,18 @@ namespace Hei.Captcha
         /// 启用HeiCaptcha
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="configure"></param>
         /// <returns></returns>
-        public static IServiceCollection AddHeiCaptcha(this IServiceCollection services)
+        public static IServiceCollection AddHeiCaptcha(this IServiceCollection services, Action<HeiCaptchaOptions> configure = null)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
+            }
+
+            if (configure != null)
+            {
+                services.Configure(configure);
             }
 
             services.AddScoped<SecurityCodeHelper>();

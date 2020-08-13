@@ -1,0 +1,60 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Demo</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+</head>
+
+<body>
+    <div class="container col-sm-4">
+        <form class="form-horizontal">
+            <div class="form-group row ">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control" placeholder="用户名">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <input type="password" class="form-control" placeholder="密 码">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" placeholder="验证码1 中文泡泡验证码">
+                </div>
+                <img height="40" src="@Url.Action("BubbleCode")" />
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" placeholder="验证码2 字母数字混混验证码">
+                </div>
+                <img height="40" src="@Url.Action("HybridCode")" />
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" placeholder="验证码3 Gif中文泡泡验证码">
+                </div>
+                <img height="40" src="@Url.Action("GifBubbleCode")" />
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" placeholder="验证码4 Gif字母数字混混验证码">
+                </div>
+                <img height="40" src="@Url.Action("GifHybridCode")" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-info btn-block">登 录</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" ></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+
+    </script>
+</body>
+</html>

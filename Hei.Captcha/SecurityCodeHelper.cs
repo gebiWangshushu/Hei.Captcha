@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Options;
 
 namespace Hei.Captcha
 {
@@ -54,15 +55,18 @@ namespace Hei.Captcha
         /// </summary>
         private static Font[] _fontArr;
 
-        public SecurityCodeHelper()
+        private readonly HeiCaptchaOptions _options;
+
+        public SecurityCodeHelper(IOptionsMonitor<HeiCaptchaOptions> optionsMonitor)
         {
-            initFonts(_imageHeight);
+            _options = optionsMonitor.CurrentValue;
+            InitFonts(_imageHeight);
         }
 
         /// <summary>
         /// 生成随机中文字符串
         /// </summary>
-        /// <param name="lenght"></param>
+        /// <param name="length"></param>
         /// <returns></returns>
         public string GetRandomCnText(int length)
         {
@@ -194,7 +198,7 @@ namespace Hei.Captcha
         /// <returns>验证码图片字节数组</returns>
         public byte[] GetEnDigitalCodeByte(string text)
         {
-            using (Image<Rgba32> img = getEnDigitalCodeImage(text))
+            using (Image<Rgba32> img = GetEnDigitalCodeImage(text))
             {
                 return img.ToGifArray();
             }
@@ -207,11 +211,11 @@ namespace Hei.Captcha
         /// <returns></returns>
         public byte[] GetGifEnDigitalCodeByte(string text)
         {
-            using (Image<Rgba32> img = getEnDigitalCodeImage(text))
+            using (Image<Rgba32> img = GetEnDigitalCodeImage(text))
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    using (Image<Rgba32> tempImg = getEnDigitalCodeImage(text))
+                    using (Image<Rgba32> tempImg = GetEnDigitalCodeImage(text))
                     {
                         tempImg.Frames[0].MetaData.GetFormatMetaData(GifFormat.Instance).FrameDelay = _random.Next(80, 150);
                         img.Frames.AddFrame(tempImg.Frames[0]);
@@ -222,25 +226,23 @@ namespace Hei.Captcha
             }
         }
 
-
         /// <summary>
         /// 生成一个数组组合验证码素材（Image）
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        private Image<Rgba32> getEnDigitalCodeImage(string text)
+        private Image<Rgba32> GetEnDigitalCodeImage(string text)
         {
             Image<Rgba32> img = new Image<Rgba32>(_imageWidth, _imageHeight);
-            var colorTextHex = _colorHexArr[_random.Next(0, _colorHexArr.Length)];
-            var lignthColorHex = _lightColorHexArr[_random.Next(0, _lightColorHexArr.Length)];
+            var lightColorHex = _lightColorHexArr[_random.Next(0, _lightColorHexArr.Length)];
 
             img.Mutate(ctx => ctx
                         .Fill(Rgba32.FromHex(_lightColorHexArr[_random.Next(0, _lightColorHexArr.Length)]))
-                        .Glow(Rgba32.FromHex(lignthColorHex))
-                        .DrawingGrid(_imageWidth, _imageHeight, Rgba32.FromHex(lignthColorHex), 8, 1)
-                        .DrawingEnText(_imageWidth, _imageHeight, text, _colorHexArr, _fontArr)
-                        .GaussianBlur(0.4f)
-                        .DrawingCircles(_imageWidth, _imageHeight, 15, _miniCircleR, _maxCircleR, Rgba32.White)
+                        .Glow(Rgba32.FromHex(lightColorHex))
+                        .DrawingGrid(_imageWidth, _imageHeight, Rgba32.FromHex(lightColorHex), _options.LightGrids, 1)
+                        .DrawingEnText(_imageWidth, _imageHeight, text, _colorHexArr, _fontArr, _options.Inflection, _options.Rotate)
+                        .GaussianBlur(_options.GaussianBlur)
+                        .DrawingCircles(_imageWidth, _imageHeight, _options.Circles, _miniCircleR, _maxCircleR, Rgba32.White)
                     );
             return img;
         }
@@ -249,34 +251,37 @@ namespace Hei.Captcha
         /// 初始化字体池
         /// </summary>
         /// <param name="fontSize">一个初始大小</param>
-        private void initFonts(int fontSize)
+        private void InitFonts(int fontSize)
         {
             if (_fontArr == null)
             {
-                var fontDir = "./fonts";
-                var list = new List<Font>();
-
-                if (Directory.Exists(fontDir))
+                if (!string.IsNullOrEmpty(_options.FontPath))
                 {
-                    var fontFiles = Directory.GetFiles(fontDir, "*.ttf");
-                    var fontCollection = new FontCollection();
+                    var list = new List<Font>();
 
-                    if (fontFiles?.Length > 0)
+                    if (Directory.Exists(_options.FontPath))
                     {
+                        var fontFiles = Directory.GetFiles(_options.FontPath, "*.ttf");
+                        var fontCollection = new FontCollection();
+
                         foreach (var ff in fontFiles)
                         {
                             list.Add(new Font(fontCollection.Install(ff), fontSize));
                         }
+                        _fontArr = list.ToArray();
+                    }
+                    else
+                    {
+                        throw new Exception($"绘制验证码字体文件不存在，请将字体文件(.ttf)复制到目录：{_options.FontPath}");
                     }
                 }
                 else
                 {
-                    throw new Exception($"绘制验证码字体文件不存在，请将字体文件(.ttf)复制到目录：{fontDir}");
+                    _fontArr = SystemFonts.Families.Take(4).Select(x => new Font(x, fontSize)).ToArray();
                 }
-                _fontArr = list.ToArray();
+
             }
         }
 
     }
 }
- 
