@@ -18,6 +18,16 @@
         public int Inflection { get; set; } = 6;
 
         /// <summary>
+        /// 字符上面的线条粗度
+        /// </summary>
+        public float GridThickness { get; set; } = 1F;
+
+        /// <summary>
+        /// 字符上面的线条透明度
+        /// </summary>
+        public float GridAlpha { get; set; } = 1F;
+
+        /// <summary>
         /// 气泡数量
         /// </summary>
         public int Circles { get; set; } = 15;
@@ -31,5 +41,10 @@
         /// 文字旋转的最大角度
         /// </summary>
         public int Rotate { get; set; } = 45;
+
+        /// <summary>
+        /// 字符大小浮动范围
+        /// </summary>
+        public float FontSize { get; set; } = 0.1F;
     }
 }

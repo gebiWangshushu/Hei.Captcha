@@ -67,7 +67,10 @@ namespace Hei.Captcha
             string[] colorHexArr,
             Font[] fonts,
             int grids = 6,
-            int rotate = 45)
+            float gridThickness = 1F,
+            float gridAlpha = 1F,
+            int rotate = 45,
+            float fontSize = 0.1F)
         {
             if (string.IsNullOrEmpty(text)) return processingContext;
 
@@ -75,31 +78,41 @@ namespace Hei.Captcha
             Random random = new Random();
             var textWidth = (size.Width / text.Length);
             var img2Size = Math.Min(textWidth, size.Height);
-            var fontMiniSize = (int)(img2Size * 0.9);
-            var fontMaxSize = (int)(img2Size * 1.37);
+            var fontMiniSize = (int)(img2Size * (1 - fontSize));
+            var fontMaxSize = (int)(img2Size * (1 + fontSize));
             Array fontStyleArr = Enum.GetValues(typeof(FontStyle));
+
+            var textY = (containerHeight - img2Size) / 2;
+
+            var textGraphicsOptions = new TextGraphicsOptions
+            {
+                TextOptions = new TextOptions
+                {
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top
+                }
+            };
 
             for (int i = 0; i < text.Length; i++)
             {
                 using (Image<Rgba32> img2 = new Image<Rgba32>(img2Size, img2Size))
                 {
-                    Font scaledFont = new Font(fonts[random.Next(0, fonts.Length)], random.Next(fontMiniSize, fontMaxSize), (FontStyle)fontStyleArr.GetValue(random.Next(fontStyleArr.Length)));
-                    var point = new Point(i * textWidth, (containerHeight - img2.Height) / 2);
+                    var randomFontSize = random.Next(fontMiniSize, fontMaxSize);
+                    Font scaledFont = new Font(fonts[random.Next(0, fonts.Length)], randomFontSize, (FontStyle)fontStyleArr.GetValue(random.Next(fontStyleArr.Length)));
                     var colorHex = colorHexArr[random.Next(0, colorHexArr.Length)];
-                    var textGraphicsOptions = new TextGraphicsOptions
-                    {
-                        TextOptions = new TextOptions
-                        {
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            VerticalAlignment = VerticalAlignment.Top
-                        }
-                    };
 
                     img2.Mutate(ctx => ctx
                                     .DrawText(textGraphicsOptions, text[i].ToString(), scaledFont, Rgba32.ParseHex(colorHex), new Point(0, 0))
-                                    .DrawingGrid(containerWidth, containerHeight, Rgba32.ParseHex(colorHex), grids, 1)
+                                    .DrawingGrid(containerWidth, containerHeight, Color.ParseHex(colorHex).WithAlpha(gridAlpha), grids, gridThickness)
                                     .Rotate(random.Next(-1 * rotate, rotate))
                                 );
+
+                    var point = new Point(i * textWidth, textY);
+                    if (randomFontSize + textY * 2 > containerHeight)
+                    {
+                        // 确保字符不会下沉到图片之外
+                        point.Y = containerHeight - randomFontSize - 8;
+                    }
                     processingContext.DrawImage(img2, point, 1);
                 }
             }
@@ -140,7 +153,7 @@ namespace Hei.Captcha
                 }
 
                 ep = new EllipsePolygon(tempPoint, random.Next(miniR, maxR));
-                
+
                 processingContext.Draw(color, (float)(random.Next(94, 145) / 100.0), ep.Clip());
             }
 
@@ -149,7 +162,6 @@ namespace Hei.Captcha
         /// <summary>
         /// 画杂线
         /// </summary>
-        /// <typeparam name="TPixel"></typeparam>
         /// <param name="processingContext"></param>
         /// <param name="containerWidth"></param>
         /// <param name="containerHeight"></param>

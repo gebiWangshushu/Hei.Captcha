@@ -24,6 +24,9 @@ namespace Demo3
                 o.Inflection = 3;
                 o.GaussianBlur = 0.3F;
                 o.Rotate = 30;
+                o.GridThickness = 0.5F;
+                o.GridAlpha = 0.5F;
+                o.FontSize = 0.1F;
             });
         }
 

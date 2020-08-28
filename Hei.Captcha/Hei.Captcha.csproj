@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>0.2.2</Version>
+    <Version>0.2.3</Version>
     <Description>一个跨平台的验证码生成器工具包，支持gif动态验证码生成。目前仅测试过.Net Core的支持。</Description>
     <Copyright>Copyright © wangsiheng 2019</Copyright>
     <Authors>wangsiheng</Authors>

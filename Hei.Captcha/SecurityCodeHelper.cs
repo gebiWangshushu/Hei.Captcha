@@ -241,7 +241,7 @@ namespace Hei.Captcha
                         .Fill(Rgba32.ParseHex(_lightColorHexArr[_random.Next(0, _lightColorHexArr.Length)]))
                         .Glow(Rgba32.ParseHex(lightColorHex))
                         .DrawingGrid(_imageWidth, _imageHeight, Rgba32.ParseHex(lightColorHex), _options.LightGrids, 1)
-                        .DrawingEnText(_imageWidth, _imageHeight, text, _colorHexArr, _fontArr, _options.Inflection, _options.Rotate)
+                        .DrawingEnText(_imageWidth, _imageHeight, text, _colorHexArr, _fontArr, _options.Inflection, _options.GridThickness, _options.GridAlpha, _options.Rotate, _options.FontSize)
                         .GaussianBlur(_options.GaussianBlur)
                         .DrawingCircles(_imageWidth, _imageHeight, _options.Circles, _miniCircleR, _maxCircleR, Color.White)
                     );
