@@ -191,10 +191,14 @@ namespace Hei.Captcha
         /// 英文字母+数字组合验证码
         /// </summary>
         /// <param name="text"></param>
+        /// <param name="singleWordGridCoefficient">单字的划线系数（>=0 系数越大 划线越多）</param>
+        /// <param name="gridCoefficient">整体图片的划线系数（>=0 系数越大 划线越多)</param>
+        /// <param name="gaussianBlurWeight">高斯模糊（>=0,为0时不模糊）</param>
+        /// <param name="circleCount">泡泡个数（>=0,为0时不画泡泡）</param>
         /// <returns>验证码图片字节数组</returns>
-        public byte[] GetEnDigitalCodeByte(string text)
+        public byte[] GetEnDigitalCodeByte(string text, int singleWordGridCoefficient = 6, int gridCoefficient = 8, float gaussianBlurWeight = 0.4f, int circleCount = 15)
         {
-            using (Image<Rgba32> img = getEnDigitalCodeImage(text))
+            using (Image<Rgba32> img = getEnDigitalCodeImage(text, singleWordGridCoefficient, gridCoefficient, gaussianBlurWeight, circleCount))
             {
                 return img.ToGifArray();
             }
@@ -204,14 +208,18 @@ namespace Hei.Captcha
         /// 动态(gif)数字字母组合验证码
         /// </summary>
         /// <param name="text"></param>
+        /// <param name="singleWordGridCoefficient">单字的划线系数（>=0 系数越大 划线越多）</param>
+        /// <param name="gridCoefficient">整体图片的划线系数（>=0 系数越大 划线越多)</param>
+        /// <param name="gaussianBlurWeight">高斯模糊（>=0,为0时不模糊）</param>
+        /// <param name="circleCount">泡泡个数（>=0,为0时不画泡泡）</param>
         /// <returns></returns>
-        public byte[] GetGifEnDigitalCodeByte(string text)
+        public byte[] GetGifEnDigitalCodeByte(string text, int singleWordGridCoefficient = 6, int gridCoefficient = 8, float gaussianBlurWeight = 0.4f, int circleCount = 15)
         {
-            using (Image<Rgba32> img = getEnDigitalCodeImage(text))
+            using (Image<Rgba32> img = getEnDigitalCodeImage(text, singleWordGridCoefficient, gridCoefficient, gaussianBlurWeight, circleCount))
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    using (Image<Rgba32> tempImg = getEnDigitalCodeImage(text))
+                    using (Image<Rgba32> tempImg = getEnDigitalCodeImage(text, singleWordGridCoefficient, gridCoefficient, gaussianBlurWeight, circleCount))
                     {
                         tempImg.Frames[0].MetaData.GetFormatMetaData(GifFormat.Instance).FrameDelay = _random.Next(80, 150);
                         img.Frames.AddFrame(tempImg.Frames[0]);
@@ -227,21 +235,48 @@ namespace Hei.Captcha
         /// 生成一个数组组合验证码素材（Image）
         /// </summary>
         /// <param name="text"></param>
+        /// <param name="singleWordGridCoefficient">单字的划线系数（>=0 系数越大 划线越多）</param>
+        /// <param name="gridCoefficient">整体图片的划线系数（>=0 系数越大 划线越多)</param>
+        /// <param name="gaussianBlurWeight">高斯模糊（>=0,为0时不模糊）</param>
+        /// <param name="circleCount">泡泡个数（>=0,为0时不画泡泡）</param>
         /// <returns></returns>
-        private Image<Rgba32> getEnDigitalCodeImage(string text)
+        private Image<Rgba32> getEnDigitalCodeImage(string text, int singleWordGridCoefficient = 6, int gridCoefficient = 8, float gaussianBlurWeight = 0.4f, int circleCount = 15)
         {
+            if (gridCoefficient < 0)
+            {
+                gridCoefficient = 0;
+            }
+            if (gaussianBlurWeight < 0)
+            {
+                gaussianBlurWeight = 0;
+            }
+            if (circleCount < 0)
+            {
+                circleCount = 0;
+            }
             Image<Rgba32> img = new Image<Rgba32>(_imageWidth, _imageHeight);
             var colorTextHex = _colorHexArr[_random.Next(0, _colorHexArr.Length)];
             var lignthColorHex = _lightColorHexArr[_random.Next(0, _lightColorHexArr.Length)];
 
-            img.Mutate(ctx => ctx
-                        .Fill(Rgba32.FromHex(_lightColorHexArr[_random.Next(0, _lightColorHexArr.Length)]))
-                        .Glow(Rgba32.FromHex(lignthColorHex))
-                        .DrawingGrid(_imageWidth, _imageHeight, Rgba32.FromHex(lignthColorHex), 8, 1)
-                        .DrawingEnText(_imageWidth, _imageHeight, text, _colorHexArr, _fontArr)
-                        .GaussianBlur(0.4f)
-                        .DrawingCircles(_imageWidth, _imageHeight, 15, _miniCircleR, _maxCircleR, Rgba32.White)
-                    );
+            img.Mutate(ctx =>
+            {
+                ctx
+                    .Fill(Rgba32.FromHex(_lightColorHexArr[_random.Next(0, _lightColorHexArr.Length)]))
+                    .Glow(Rgba32.FromHex(lignthColorHex))
+                    .DrawingGrid(_imageWidth, _imageHeight, Rgba32.FromHex(lignthColorHex), gridCoefficient, 1)
+                    .DrawingEnText(_imageWidth, _imageHeight, text, _colorHexArr, _fontArr, singleWordGridCoefficient)
+                    ;
+
+                if (gaussianBlurWeight > 0)
+                {
+                    ctx.GaussianBlur(gaussianBlurWeight);
+                }
+                if (circleCount > 0)
+                {
+                    ctx.DrawingCircles(_imageWidth, _imageHeight, circleCount, _miniCircleR, _maxCircleR, Rgba32.White);
+                }
+            });
+
             return img;
         }
 
@@ -279,4 +314,3 @@ namespace Hei.Captcha
 
     }
 }
- 
