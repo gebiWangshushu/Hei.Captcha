@@ -142,7 +142,9 @@ public IActionResult GifHybridCode()
 
 参照Demo， 通过修改/丰富应用程序运行目录`./fonts`目录下的字体文件，生成更多不同字体组合的验证码。
 
+## License
 
+*Hei.Captcha* is licensed under the [MIT license](<https://github.com/gebiWangshushu/Hei.Captcha/blob/master/LICENSE>).
 
 ## 公众号
 
