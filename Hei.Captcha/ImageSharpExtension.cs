@@ -59,9 +59,13 @@ namespace Hei.Captcha
             });
         }
 
-        public static IImageProcessingContext<TPixel> DrawingEnText<TPixel>(this IImageProcessingContext<TPixel> processingContext, int containerWidth, int containerHeight, string text, string[] colorHexArr, Font[] fonts)
+        public static IImageProcessingContext<TPixel> DrawingEnText<TPixel>(this IImageProcessingContext<TPixel> processingContext, int containerWidth, int containerHeight, string text, string[] colorHexArr, Font[] fonts, int gridCoefficient = 6)
             where TPixel : struct, IPixel<TPixel>
         {
+            if (gridCoefficient < 0)
+            {
+                gridCoefficient = 0;
+            }
             return processingContext.Apply(img =>
             {
                 if (string.IsNullOrEmpty(text) == false)
@@ -88,7 +92,7 @@ namespace Hei.Captcha
 
                             img2.Mutate(ctx => ctx
                                             .DrawText(textGraphicsOptions, text[i].ToString(), scaledFont, Rgba32.FromHex(colorHex), new Point(0, 0))
-                                            .DrawingGrid(containerWidth, containerHeight, Rgba32.FromHex(colorHex), 6, 1)
+                                            .DrawingGrid(containerWidth, containerHeight, Rgba32.FromHex(colorHex), gridCoefficient, 1)
                                             .Rotate(random.Next(-45, 45))
                                         );
                             img.Mutate(ctx => ctx.DrawImage(img2, point, 1));
