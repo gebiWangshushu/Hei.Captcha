@@ -64,7 +64,9 @@
 
 ## 使用
 
-开始之前先把字体文件<https://github.com/gebiWangshushu/Hei.Captcha/tree/master/Demo/fonts>整个fonts目录下载放到程序根目录(如果只想下载一个文件夹可以使用chrome插件：[GitZip for github](https://chrome.google.com/webstore/detail/gitzip-for-github/ffabmkklhbepgcgfonabamgnfafbdlkn))
+**（0.2.0及以下版本）**开始之前需先把字体文件<https://github.com/gebiWangshushu/Hei.Captcha/tree/master/Demo/fonts>整个fonts目录下载放到程序根目录(如果只想下载一个文件夹可以使用chrome插件：[GitZip for github](https://chrome.google.com/webstore/detail/gitzip-for-github/ffabmkklhbepgcgfonabamgnfafbdlkn))
+
+
 
 
 
@@ -142,8 +144,11 @@ public IActionResult GifHybridCode()
 
 参照Demo， 通过修改/丰富应用程序运行目录`./fonts`目录下的字体文件，生成更多不同字体组合的验证码。
 
-**仅在0.2.0及以下版本有效**
+**（仅在0.2.0及以下版本有效）**
 
+
+
+## License
 
 *Hei.Captcha* is licensed under the [MIT license](<https://github.com/gebiWangshushu/Hei.Captcha/blob/master/LICENSE>).
 
